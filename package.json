@@ -29,7 +29,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/Elte156/area-codes-nanp.git"
+    "url": "git+https://github.com/Elte156/area-codes-nanp.git"
   },
   "bugs": {
     "url": "https://github.com/Elte156/area-codes-nanp/issues"
