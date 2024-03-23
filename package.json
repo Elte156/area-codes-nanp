@@ -1,0 +1,38 @@
+{
+  "name": "area-codes-nanp",
+  "version": "0.0.2",
+  "description": "List of in-service (active and valid) U.S. area codes (NPAs) according to the North American Numbering Plan Administrator (NANPA)",
+  "author": "Tony Pagaduan <Elte156@gmail.com>",
+  "scripts": {
+    "build": "bun build ./src/index.ts --outdir ./dist --target node",
+    "test": "bun test"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "license": "MIT",
+  "module": "dist/index.js",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "keywords": [
+    "area",
+    "codes",
+    "NPA",
+    "nanp",
+    "NANPA"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Elte156/area-codes-nanp.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Elte156/area-codes-nanp/issues"
+  },
+  "homepage": "https://github.com/Elte156/area-codes-nanp#readme"
+}
