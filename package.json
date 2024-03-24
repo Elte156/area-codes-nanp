@@ -7,15 +7,10 @@
     "build": "bun build ./src/index.ts --outdir ./dist --target node",
     "test": "bun test"
   },
-  "devDependencies": {
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  },
   "license": "MIT",
   "module": "dist/index.js",
   "type": "module",
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],
