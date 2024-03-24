@@ -1,17 +1,21 @@
-import { test, expect } from 'bun:test';
 import {
   areaCodesByNonGeo,
   areaCodesInService,
   areaCodesByGeo,
 } from './area_codes';
 
-test('areaCodes', () => {
-  expect(areaCodesInService).toBeArray();
-  expect(areaCodesInService).not.toBeEmpty();
-});
+describe('area codes', () => {
+  it('should be an array', () => {
+    expect(areaCodesInService).toEqual(expect.any(Array));
+  });
 
-test('equal', () => {
-  expect(areaCodesInService).toStrictEqual(
-    expect.arrayContaining([...areaCodesByGeo, ...areaCodesByNonGeo]),
-  );
+  it('should not be empty', () => {
+    expect(areaCodesInService.length).toBeGreaterThan(0);
+  });
+
+  it('should equal geo and non geo arrays', () => {
+    expect(areaCodesInService).toStrictEqual(
+      expect.arrayContaining([...areaCodesByGeo, ...areaCodesByNonGeo]),
+    );
+  });
 });
