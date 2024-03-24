@@ -1,1 +1,5 @@
-export * from './area_codes';
+export {
+  areaCodesByGeo,
+  areaCodesByNonGeo,
+  areaCodesInService,
+} from './area_codes';

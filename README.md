@@ -15,4 +15,4 @@ TBD
 TBD
 
 This library is automatically updated according to the published list by the NANPA.
-https://nationalnanpa.com/reports/reports_npa.html
+<https://nationalnanpa.com/reports/reports_npa.html>
