@@ -25,11 +25,47 @@ jobs:
           npm run format
       - name: Check for Changes
         run: |
-          echo "Hello World TODO:"
           ## Check if there is a diff (git version 2.30+ is required) - Returns data when there is a diff
           UPDATED_FILE=$(git diff --ignore-matching-lines="This file was automatically generated .*" --shortstat ./src/area_codes.ts)
           if [ -n "$UPDATED_FILE" ] ; then
             echo "Changes were detected. Processing..."
+            return 0 # Exit the workflow without failing
           else
             echo "No changes detected. No further processing needed."
+            return 0 # Exit the workflow without failing
           fi
+      - name: Create Branch
+        if: ${{ success() }} # Only run if the previous step was successful
+        run: |
+          git checkout -b area-codes-sync
+
+      ###############
+
+      # - name: Create Branch
+      #   run: |
+      #     git checkout -b feature/area-codes-sync
+      # - name: Commit Changes
+      #   run: |
+      #     git config --global user.name "Your Name"
+      #     git config --global user.email "your-email@example.com"
+      #     git add .
+      #     git commit -m "Sync area codes"
+      # - name: Bump Version
+      #   run: |
+      #     npm version patch
+      # - name: Push Branch
+      #   uses: ad-m/github-push-action@master
+      #   with:
+      #     branch: feature/area-codes-sync
+      # - name: Create Pull Request
+      #   uses: peter-evans/create-pull-request@v3
+      #   with:
+      #     token: ${{ secrets.GITHUB_TOKEN }}
+      #     branch: feature/area-codes-sync
+      #     title: Sync Area Codes
+      #     body: |
+      #       This pull request syncs the area codes.
+      # - name: Set Auto Merge
+      #   uses: peter-evans/auto-merge-action@v1
+      #   with:
+      #     pull-request-number: ${{ steps.create_pull_request.outputs.pull-request-number }}
