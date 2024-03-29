@@ -29,10 +29,10 @@ jobs:
           UPDATED_FILE=$(git diff --ignore-matching-lines="This file was automatically generated .*" --shortstat ./src/area_codes.ts)
           if [ -n "$UPDATED_FILE" ] ; then
             echo "Changes were detected. Processing..."
-            return 0 # Exit the workflow without failing
+            exit 0
           else
             echo "No changes detected. No further processing needed."
-            return 0 # Exit the workflow without failing
+            exit 0
           fi
       - name: Create Branch
         if: ${{ success() }} # Only run if the previous step was successful
