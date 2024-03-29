@@ -6,34 +6,65 @@ interface CSVRow {
   [key: string]: string;
 }
 
-async function fetchAreaCodes(): Promise<string> {
+/**
+ * Fetch up-to-date area codes from nationalnanpa.com
+ *
+ * Expected CSV format:
+ *  File Date,03/28/2024
+ *  NPA_ID, ..., USE, ..., IN_SERVICE, ..., DIALING_PLAN_NOTES
+ *  Record 1
+ *  Record 2
+ *  etc
+ *
+ * Valuable columns:
+ *  NPA_ID: Area code
+ *  USE: N - Non-Geographic, G - Geographic
+ *  IN_SERVICE: Y - In service, N - Not in service
+ *
+ * @return {*}  {Promise<string>}
+ */
+export async function fetchAreaCodes(): Promise<string> {
   const url = 'https://nationalnanpa.com/nanp1/npa_report.csv';
   try {
-    console.log('AA');
     const response = await fetch(url);
-    console.log('BB');
 
     if (!response.ok) {
-    //   throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error(`HTTP error! Status: ${response.status}`);
     }
-
-    console.log('CC');
 
     return response.text();
   } catch (error: any) {
-    console.log('CC', error);
-    throw new Error(`Error fetching CSV: ${error}`);
+    console.log('Error fetching CSV');
+    throw error;
   }
 }
 
-async function parseAreaCodes(csv: Promise<string>): Promise<CSVRow[]> {
+export function parseFileDate(input: string): Date {
+  const fileDateRaw = input.split('\n', 1)[0];
+  const fileDate = new Date(fileDateRaw.split(',')[1]);
+
+  if (!fileDate) {
+    throw new Error(`Invalid file date: ${fileDateRaw}`);
+  }
+
+  return fileDate;
+}
+
+export async function parseAreaCodes(
+  csv: string | Promise<string>,
+): Promise<CSVRow[]> {
   const results: CSVRow[] = [];
 
   const stream = Readable.from(await csv);
 
   return new Promise<CSVRow[]>((resolve, reject) => {
     stream
-      .pipe(csvParser())
+      .pipe(
+        csvParser({
+          // Skip the file date row
+          skipLines: 1,
+        }),
+      )
       .on('data', (data: any) => {
         results.push(data);
       })
@@ -46,16 +77,58 @@ async function parseAreaCodes(csv: Promise<string>): Promise<CSVRow[]> {
   });
 }
 
-function generateAreaCodeFile() {
-  const filename = 'area_codes.ts';
+function validateRecords(areaCodesParsed: CSVRow[]) {
+  // Check for existing columns
+  const requiredColumns = ['NPA_ID', 'USE', 'IN_SERVICE'];
+  const missingColumns = requiredColumns.filter(
+    (x) => !Object.keys(areaCodesParsed[0]).includes(x),
+  );
+  if (missingColumns.length) {
+    const list = missingColumns.join(', ');
+    throw new Error(`Missing columns: ${list}`);
+  }
+
+  // Check for valid NPA_ID format
+  const invalidNpa = areaCodesParsed.filter((x) => {
+    return !/^\d{3}$/.test(x['NPA_ID']);
+  });
+  if (invalidNpa.length) {
+    const list = invalidNpa.map((x) => x['NPA_ID']).join(', ');
+    throw new Error(`Invalid NPA_ID values: ${list}`);
+  }
+
+  // Check for valid USE format
+  const invalidUse = areaCodesParsed.filter((x) => {
+    return !/^[NG]$/.test(x['USE']) && x['USE'].length !== 0;
+  });
+  if (invalidUse.length) {
+    const list = invalidUse.map((x) => x['USE']).join(', ');
+    throw new Error(`Invalid USE values: ${list}`);
+  }
+
+  // Check for valid IN_SERVICE format
+  const invalidInService = areaCodesParsed.filter((x) => {
+    return !/^[YN]$/.test(x['IN_SERVICE']);
+  });
+  if (invalidInService.length) {
+    const list = invalidInService.map((x) => x['IN_SERVICE']).join(', ');
+    throw new Error(`Invalid IN_SERVICE values: ${list}`);
+  }
+}
+
+export async function generateAreaCodeFile(
+  areaCodes: CSVRow[] | Promise<CSVRow[]>,
+  fileDate: Date,
+) {
+  const list = (await areaCodes).map((row) => `'${row['NPA_ID']}'`).join(',\n');
   const fileTemplate = `
-    // This file was automatically generated
+    // This file was automatically generated from CSV file: ${fileDate.toISOString()}
     export const areaCodesByGeo: readonly string[] = [
-        '201',
-        '202',
+        ${list}
     ];
     `;
 
+  const filename = 'area_codes.ts';
   fs.writeFileSync(filename, fileTemplate);
   console.log(`${filename} file generated`);
 }
@@ -64,15 +137,17 @@ async function main() {
   // Fetch codes
   const areaCodeResponse = fetchAreaCodes();
 
-  console.log('tony', {hello: await areaCodeResponse});
+  // Parse date time of file
+  const fileDate = parseFileDate(await areaCodeResponse);
 
   // Parse codes
-  parseAreaCodes(areaCodeResponse);
+  const areaCodesParsed = await parseAreaCodes(areaCodeResponse);
 
-  // console.log(await areaCodeParsed);
+  // Validate expected format
+  validateRecords(areaCodesParsed);
 
   // Write codes
-  generateAreaCodeFile();
+  generateAreaCodeFile(areaCodesParsed, fileDate);
 }
 
 main();
