@@ -3,7 +3,9 @@ import { Readable } from 'stream';
 import csvParser from 'csv-parser';
 
 interface CSVRow {
-  [key: string]: string;
+  NPA_ID: string;
+  USE: string;
+  IN_SERVICE: string;
 }
 
 /**
@@ -90,28 +92,28 @@ function validateRecords(areaCodesParsed: CSVRow[]) {
 
   // Check for valid NPA_ID format
   const invalidNpa = areaCodesParsed.filter((x) => {
-    return !/^\d{3}$/.test(x['NPA_ID']);
+    return !/^\d{3}$/.test(x.NPA_ID);
   });
   if (invalidNpa.length) {
-    const list = invalidNpa.map((x) => x['NPA_ID']).join(', ');
+    const list = invalidNpa.map((x) => x.NPA_ID).join(', ');
     throw new Error(`Invalid NPA_ID values: ${list}`);
   }
 
   // Check for valid USE format
   const invalidUse = areaCodesParsed.filter((x) => {
-    return !/^[NG]$/.test(x['USE']) && x['USE'].length !== 0;
+    return !/^[NG]$/.test(x.USE) && x.USE.length !== 0;
   });
   if (invalidUse.length) {
-    const list = invalidUse.map((x) => x['USE']).join(', ');
+    const list = invalidUse.map((x) => x.USE).join(', ');
     throw new Error(`Invalid USE values: ${list}`);
   }
 
   // Check for valid IN_SERVICE format
   const invalidInService = areaCodesParsed.filter((x) => {
-    return !/^[YN]$/.test(x['IN_SERVICE']);
+    return !/^[YN]$/.test(x.IN_SERVICE);
   });
   if (invalidInService.length) {
-    const list = invalidInService.map((x) => x['IN_SERVICE']).join(', ');
+    const list = invalidInService.map((x) => x.IN_SERVICE).join(', ');
     throw new Error(`Invalid IN_SERVICE values: ${list}`);
   }
 }
@@ -121,12 +123,14 @@ export async function generateAreaCodeFile(
   fileDate: Date,
 ) {
   const areaCodesByGeo = (await areaCodes)
-    .filter((row) => row['IN_SERVICE'] === 'Y' && row['USE'] === 'G')
-    .map((row) => `'${row['NPA_ID']}'`)
+    .filter((row) => row.IN_SERVICE === 'Y' && row.USE === 'G')
+    .sort((a, b) => a.NPA_ID.localeCompare(b.NPA_ID))
+    .map((row) => `'${row.NPA_ID}'`)
     .join(',\n');
   const areaCodesByNonGeo = (await areaCodes)
-    .filter((row) => row['IN_SERVICE'] === 'Y' && row['USE'] === 'N')
-    .map((row) => `'${row['NPA_ID']}'`)
+    .filter((row) => row.IN_SERVICE === 'Y' && row.USE === 'N')
+    .sort((a, b) => a.NPA_ID.localeCompare(b.NPA_ID))
+    .map((row) => `'${row.NPA_ID}'`)
     .join(',\n');
 
   // Create file
