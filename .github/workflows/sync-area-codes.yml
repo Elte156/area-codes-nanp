@@ -24,20 +24,19 @@ jobs:
           npm run fetch-area-codes
           npm run format
       - name: Check for Changes
+        id: check_for_changes
         run: |
           ## Check if there is a diff (git version 2.30+ is required) - Returns data when there is a diff
           UPDATED_FILE=$(git diff --ignore-matching-lines="This file was automatically generated .*" --shortstat ./src/area_codes.ts)
           if [ -n "$UPDATED_FILE" ] ; then
             echo "Changes were detected. Processing..."
-            exit 1
           else
             echo "No changes detected. No further processing needed."
-            exit 1
           fi
-      - name: Create Branch
-        if: ${{ success() }} # Only run if the previous step was successful
+      - name: Process Changes
+        if: ${{ steps.check_for_changes.outputs.UPDATED_FILE != '' }}
         run: |
-          git checkout -b area-codes-sync
+          echo "Changes were detected. Processing..."
 
       ###############
 
