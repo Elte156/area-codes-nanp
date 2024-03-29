@@ -120,11 +120,29 @@ export async function generateAreaCodeFile(
   areaCodes: CSVRow[] | Promise<CSVRow[]>,
   fileDate: Date,
 ) {
-  const list = (await areaCodes).map((row) => `'${row['NPA_ID']}'`).join(',\n');
+  const areaCodesByGeo = (await areaCodes)
+    .filter((row) => row['IN_SERVICE'] === 'Y' && row['USE'] === 'G')
+    .map((row) => `'${row['NPA_ID']}'`)
+    .join(',\n');
+  const areaCodesByNonGeo = (await areaCodes)
+    .filter((row) => row['IN_SERVICE'] === 'Y' && row['USE'] === 'N')
+    .map((row) => `'${row['NPA_ID']}'`)
+    .join(',\n');
+
+  // Create file
   const fileTemplate = `
     // This file was automatically generated from CSV file: ${fileDate.toISOString()}
     export const areaCodesByGeo: readonly string[] = [
-        ${list}
+      ${areaCodesByGeo}
+    ];
+
+    export const areaCodesByNonGeo: readonly string[] = [
+      ${areaCodesByNonGeo}
+    ];
+
+    export const areaCodesInService: readonly string[] = [
+      ...areaCodesByGeo,
+      ...areaCodesByNonGeo,
     ];
     `;
 
