@@ -150,7 +150,7 @@ export async function generateAreaCodeFile(
     ];
     `;
 
-  const filename = 'area_codes.ts';
+  const filename = './src/area_codes.ts';
   fs.writeFileSync(filename, fileTemplate);
   console.log(`${filename} file generated`);
 }

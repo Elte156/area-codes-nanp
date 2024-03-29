@@ -3,7 +3,7 @@ name: Sync Area Codes
 on:
   # TODO: Remove when done testing
   pull_request:
-    branches: [ main ]
+    branches: [main]
   # TODO: Uncomment when done testing
   # schedule:
   #   - cron: '0 12 * * *'
@@ -23,6 +23,13 @@ jobs:
         run: |
           npm run fetch-area-codes
           npm run format
-      - name: Fetch Area Codes
+      - name: Check for Changes
         run: |
-          echo "Hello World"
+          echo "Hello World TODO:"
+          ## Check if there is a diff (git version 2.30+ is required) - Returns data when there is a diff
+          UPDATED_FILE=$(git diff --ignore-matching-lines="This file was automatically generated .*" --shortstat ./src/area_codes.ts)
+          if [ -n "$UPDATED_FILE" ] ; then
+            echo "Changes were detected. Processing..."
+          else
+            echo "No changes detected. No further processing needed."
+          fi
