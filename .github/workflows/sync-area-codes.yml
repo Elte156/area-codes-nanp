@@ -1,0 +1,28 @@
+name: Sync Area Codes
+
+on:
+  # TODO: Remove when done testing
+  pull_request:
+    branches: [ main ]
+  # TODO: Uncomment when done testing
+  # schedule:
+  #   - cron: '0 12 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Fetch Area Codes
+        run: |
+          npm run fetch-area-codes
+          npm run format
+      - name: Fetch Area Codes
+        run: |
+          echo "Hello World"
