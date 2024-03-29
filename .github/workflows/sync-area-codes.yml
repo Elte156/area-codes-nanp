@@ -33,7 +33,8 @@ jobs:
           else
             echo "No changes detected. No further processing needed."
           fi
-          echo "UPDATED_FILE=${UPDATED_FILE}" >> "$GITHUB_OUTPUT"
+          # echo "UPDATED_FILE=${UPDATED_FILE}" >> "$GITHUB_OUTPUT"
+          echo "UPDATED_FILE=" >> "$GITHUB_OUTPUT"
       - name: Process Changes
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
         run: |
