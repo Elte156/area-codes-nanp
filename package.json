@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "format": "prettier --single-quote --write **/*.md **/*.ts",
+    "format": "prettier --single-quote --write **/*.md **/*.ts **/*.yml",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
