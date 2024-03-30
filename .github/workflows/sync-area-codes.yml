@@ -70,8 +70,8 @@ jobs:
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
       - name: Enable Pull Request Automerge
         run: gh pr merge --squash --auto --delete-branch "${{ steps.cpr.outputs.pull-request-number }}"
-        # env: # TODO: Not sure I need this
-        #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GH_TOKEN: ${{ github.token }}
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
 
 
