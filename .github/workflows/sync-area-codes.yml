@@ -42,6 +42,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.PAT }}
           commit-message: |
             Updated area codes list v${{ steps.check-for-changes.outputs.NEW_VERSION }}
 
