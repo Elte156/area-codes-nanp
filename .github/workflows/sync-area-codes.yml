@@ -65,6 +65,8 @@ jobs:
             package-lock.json
             src/area_codes.ts
           delete-branch: true
+          # TODO: Set this to `main` when done testing
+          base: schedule-fetch
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
       # - name: Enable Pull Request Automerge
       #   run: gh pr merge --squash --auto --delete-branch "${{ steps.cpr.outputs.pull-request-number }}"
