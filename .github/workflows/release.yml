@@ -1,12 +1,15 @@
 name: Release
 
 on:
-  release:
-    types: [published]
+  push:
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      # Needed by the action-gh-release action
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js 20
@@ -18,6 +21,25 @@ jobs:
       - run: npm ci
       - run: npm run build
       - run: npm test
+      - name: Detect Version Change
+        id: check-for-changes
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          git fetch --tags
+          if ! git tag | grep -q "^$VERSION$"; then
+            # Version bump detected
+            echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create Release
+        id: release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.check-for-changes.outputs.VERSION }}
+          name: ${{ steps.check-for-changes.outputs.VERSION }}
+          target_commitish: main
+          generate_release_notes: true
+        if: ${{ steps.check-for-changes.outputs.VERSION }}
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        if: ${{ steps.release.outputs.id }}

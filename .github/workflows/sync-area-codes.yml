@@ -1,0 +1,63 @@
+name: Sync Area Codes
+
+on:
+  schedule:
+    - cron: '0 12 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      # Needed by the create-pull-request action
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+      - run: npm ci
+      - name: Fetch Area Codes
+        run: |
+          npm run fetch-area-codes
+          npm run format
+      - name: Check for Changes
+        id: check-for-changes
+        run: |
+          ## Check if there is a diff (git version 2.30+ is required) - Returns data when there is a diff
+          UPDATED_FILE=$(git diff --ignore-matching-lines="This file was automatically generated .*" --shortstat ./src/area_codes.ts)
+          if [ -n "$UPDATED_FILE" ] ; then
+            echo "Changes were detected. Bumping version..."
+            NEW_VERSION=$(npm version patch)
+            echo "NEW_VERSION=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+          else
+            echo "No changes detected. No further processing needed."
+          fi
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: |
+            Updated area codes list v${{ steps.check-for-changes.outputs.NEW_VERSION }}
+
+            A new list of area codes have been detected and updated.
+          branch: auto-update-area-codes
+          title: '[Auto] Area Codes Update v${{ steps.check-for-changes.outputs.NEW_VERSION }}'
+          body: |
+            Updated area codes list v${{ steps.check-for-changes.outputs.NEW_VERSION }}
+
+            A new list of area codes have been detected and updated.
+          add-paths: |
+            package.json
+            package-lock.json
+            src/area_codes.ts
+          delete-branch: true
+          base: main
+        if: ${{ steps.check-for-changes.outputs.NEW_VERSION }}
+      - name: Enable Pull Request Automerge
+        run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        if: ${{ steps.cpr.outputs.pull-request-number }}
