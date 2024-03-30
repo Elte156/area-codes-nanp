@@ -31,11 +31,10 @@ jobs:
           if [ -n "$UPDATED_FILE" ] ; then
             echo "Changes were detected. Bumping version..."
             NEW_VERSION=$(npm version patch)
+            echo "NEW_VERSION=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
           else
             echo "No changes detected. No further processing needed."
           fi
-          echo "UPDATED_FILE=${UPDATED_FILE}" >> "$GITHUB_OUTPUT"
-          echo "NEW_VERSION=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v6
@@ -56,9 +55,9 @@ jobs:
             src/area_codes.ts
           delete-branch: true
           base: main
-        if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
+        if: ${{ steps.check-for-changes.outputs.NEW_VERSION }}
       - name: Enable Pull Request Automerge
         run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
-        if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
+        if: ${{ steps.cpr.outputs.pull-request-number }}
