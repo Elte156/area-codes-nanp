@@ -11,6 +11,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      # Needed by the create-pull-request action
+      contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js 20
@@ -29,26 +33,46 @@ jobs:
           ## Check if there is a diff (git version 2.30+ is required) - Returns data when there is a diff
           UPDATED_FILE=$(git diff --ignore-matching-lines="This file was automatically generated .*" --shortstat ./src/area_codes.ts)
           if [ -n "$UPDATED_FILE" ] ; then
-            echo "Changes were detected. Processing..."
+            echo "Changes were detected. Bumping version..."
+            NEW_VERSION=$(npm version patch)
           else
             echo "No changes detected. No further processing needed."
           fi
+          # TODO: Remove when done testing
           UPDATED_FILE=""
           echo "UPDATED_FILE=${UPDATED_FILE}" >> "$GITHUB_OUTPUT"
-      - name: Process Changes
-        if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
-        run: |
-          echo "Changes were detected. Processing..."
-      - name: Check Does This Run
-        run: |
-          echo "Does this run?"
+          echo "NEW_VERSION=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
+      # - name: Process Changes
+      #   run: |
+      #     echo "Changes were detected. Processing..."
+      #   if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
+      - name: Create Pull Request
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: |
+            Updated area codes list v${{ steps.check-for-changes.outputs.NEW_VERSION }}
 
-      ## Upon Detect New Area Codes
-      # Configure Git
-      # Commit Changes
-      # Bump Version Number
-      # Push Changes
-      # Create PR
+            A new list of area codes have been detected and updated.
+          branch: auto-update-area-codes
+          title: '[Auto] Area Codes Update v${{ steps.check-for-changes.outputs.NEW_VERSION }}'
+          body: |
+            Updated area codes list v${{ steps.check-for-changes.outputs.NEW_VERSION }}
+
+            A new list of area codes have been detected and updated.
+          add-paths: |
+            package.json
+            package-lock.json
+            src/area_codes.ts
+          delete-branch: true
+        if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
+      # - name: Enable Pull Request Automerge
+      #   run: gh pr merge --squash --auto --delete-branch "${{ steps.cpr.outputs.pull-request-number }}"
+      #   # env: # TODO: Not sure I need this
+      #   #   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
+
+
 
       ## Upon Merge
       # Detect the version bump
@@ -56,6 +80,13 @@ jobs:
 
       ## Upon Publish Release
       # Deploy to NPM
+
+      # - name: Approve a PR
+      #   if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
+      #   run: gh pr review --approve "$PR_URL"
+      #   env:
+      #     PR_URL: ${{github.event.pull_request.html_url}}
+      #     GH_TOKEN:
 
       ###############
 
