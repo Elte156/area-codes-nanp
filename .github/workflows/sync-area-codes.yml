@@ -39,7 +39,7 @@ jobs:
             echo "No changes detected. No further processing needed."
           fi
           # TODO: Remove when done testing
-          UPDATED_FILE=""
+          # UPDATED_FILE=""
           echo "UPDATED_FILE=${UPDATED_FILE}" >> "$GITHUB_OUTPUT"
           echo "NEW_VERSION=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
       # - name: Process Changes
