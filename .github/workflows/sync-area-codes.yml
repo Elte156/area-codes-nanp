@@ -69,7 +69,7 @@ jobs:
           base: schedule-fetch
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
       - name: Enable Pull Request Automerge
-        run: gh pr merge --squash --auto --delete-branch "${{ steps.cpr.outputs.pull-request-number }}"
+        run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
