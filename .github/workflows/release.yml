@@ -40,7 +40,8 @@ jobs:
           target_commitish: main
           generate_release_notes: true
         if: ${{ steps.check-for-changes.outputs.VERSION }}
-      - run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        if: ${{ steps.release.outputs.id }}
+      # TODO: don't publish yet
+      # - run: npm publish
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   if: ${{ steps.release.outputs.id }}
