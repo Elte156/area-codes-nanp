@@ -35,7 +35,7 @@ jobs:
             echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
           # TODO: Forcing
-          # echo "VERSION=0.0.6" >> "$GITHUB_OUTPUT"
+          echo "VERSION=0.0.6" >> "$GITHUB_OUTPUT"
       - name: Create Release
         id: release
         uses: softprops/action-gh-release@v2
