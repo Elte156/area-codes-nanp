@@ -1,8 +1,12 @@
 name: Release
 
 on:
-  push:
+  # TODO: Remove when done testing
+  pull_request:
     branches: [main]
+  # TODO: Uncomment when done testing
+  # push:
+  #   branches: [main]
 
 jobs:
   build:
@@ -15,18 +19,27 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
+      - run: npm run build
+      - run: npm test
       - name: Detect version change and create release
+        id: check-for-changes
         run: |
           VERSION=$(node -p "require('./package.json').version")
           git fetch --tags
           if ! git tag | grep -q "^$VERSION$"; then
-            # TODO: Is there a bot user I can use?
-            git config --local user.email "action@github.com"
-            git config --local user.name "GitHub Action"
-            git tag $VERSION
-            git push origin $VERSION
-            echo "VERSION=$VERSION" >> $GITHUB_ENV
+            # Version bump detected
+            echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
+      - name: Process Changes
+        run: |
+          echo "Going to create a release"
+        if: ${{ steps.check-for-changes.outputs.VERSION != '' }}
+
+      # - name: Create Release
+      #   uses: softprops/action-gh-release@v2
+      #   if: startsWith(github.ref, 'refs/tags/')
+
+
       # TODO: Eval this
       # - name: Create Release
       #   if: env.VERSION != ''
