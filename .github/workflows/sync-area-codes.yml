@@ -1,12 +1,8 @@
 name: Sync Area Codes
 
 on:
-  # TODO: Remove when done testing
-  pull_request:
-    branches: [main]
-  # TODO: Uncomment when done testing
-  # schedule:
-  #   - cron: '0 12 * * *'
+  schedule:
+    - cron: '0 12 * * *'
 
 jobs:
   build:
@@ -38,14 +34,8 @@ jobs:
           else
             echo "No changes detected. No further processing needed."
           fi
-          # TODO: Remove when done testing
-          # UPDATED_FILE=""
           echo "UPDATED_FILE=${UPDATED_FILE}" >> "$GITHUB_OUTPUT"
           echo "NEW_VERSION=${NEW_VERSION}" >> "$GITHUB_OUTPUT"
-      # - name: Process Changes
-      #   run: |
-      #     echo "Changes were detected. Processing..."
-      #   if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v6
@@ -65,58 +55,10 @@ jobs:
             package-lock.json
             src/area_codes.ts
           delete-branch: true
-          # TODO: Set this to `main` when done testing
-          base: schedule-fetch
+          base: main
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
       - name: Enable Pull Request Automerge
         run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
           GH_TOKEN: ${{ github.token }}
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
-
-
-
-      ## Upon Merge
-      # Detect the version bump
-      # Create a release
-
-      ## Upon Publish Release
-      # Deploy to NPM
-
-      # - name: Approve a PR
-      #   if: ${{ steps.metadata.outputs.update-type == 'version-update:semver-patch' || steps.metadata.outputs.update-type == 'version-update:semver-minor' }}
-      #   run: gh pr review --approve "$PR_URL"
-      #   env:
-      #     PR_URL: ${{github.event.pull_request.html_url}}
-      #     GH_TOKEN:
-
-      ###############
-
-      # - name: Create Branch
-      #   run: |
-      #     git checkout -b feature/area-codes-sync
-      # - name: Commit Changes
-      #   run: |
-      #     git config --global user.name "Your Name"
-      #     git config --global user.email "your-email@example.com"
-      #     git add .
-      #     git commit -m "Sync area codes"
-      # - name: Bump Version
-      #   run: |
-      #     npm version patch
-      # - name: Push Branch
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     branch: feature/area-codes-sync
-      # - name: Create Pull Request
-      #   uses: peter-evans/create-pull-request@v3
-      #   with:
-      #     token: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: feature/area-codes-sync
-      #     title: Sync Area Codes
-      #     body: |
-      #       This pull request syncs the area codes.
-      # - name: Set Auto Merge
-      #   uses: peter-evans/auto-merge-action@v1
-      #   with:
-      #     pull-request-number: ${{ steps.create_pull_request.outputs.pull-request-number }}
