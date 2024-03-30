@@ -1,3 +1,4 @@
+// This file was automatically generated from CSV file: 2024-03-30T00:00:00.000Z
 export const areaCodesByGeo: readonly string[] = [
   '201',
   '202',
@@ -27,6 +28,7 @@ export const areaCodesByGeo: readonly string[] = [
   '229',
   '231',
   '234',
+  '235',
   '236',
   '239',
   '240',
