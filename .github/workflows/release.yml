@@ -1,12 +1,8 @@
 name: Release
 
 on:
-  # TODO: Remove when done testing
-  pull_request:
+  push:
     branches: [main]
-  # TODO: Uncomment when done testing
-  # push:
-  #   branches: [main]
 
 jobs:
   build:
@@ -34,27 +30,16 @@ jobs:
             # Version bump detected
             echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
-          # TODO: Forcing
-          echo "VERSION=0.0.6" >> "$GITHUB_OUTPUT"
       - name: Create Release
         id: release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.check-for-changes.outputs.VERSION }}
           name: ${{ steps.check-for-changes.outputs.VERSION }}
-          # TODO: Clean up to main
-          target_commitish: schedule-fetch
+          target_commitish: main
           generate_release_notes: true
-          # body_path: ${{ github.workspace }}-CHANGELOG.txt
-          # note you'll typically need to create a personal access token
-          # with permissions to create releases in the other repo
-          # token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
         if: ${{ steps.check-for-changes.outputs.VERSION }}
-      # - run: npm publish
-      #   env:
-      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-      #   if: ${{ steps.release.outputs.id }}
-      - name: PUB
-        run: |
-          echo "PUB"
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         if: ${{ steps.release.outputs.id }}
