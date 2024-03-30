@@ -33,13 +33,17 @@ jobs:
           else
             echo "No changes detected. No further processing needed."
           fi
+          UPDATED_FILE=""
           echo "UPDATED_FILE=${UPDATED_FILE}" >> "$GITHUB_OUTPUT"
       - name: Process Changes
         if: ${{ steps.check-for-changes.outputs.UPDATED_FILE != '' }}
         run: |
           echo "Changes were detected. Processing..."
+      - name: Check Does This Run
+        run: |
+          echo "Does this run?"
 
-      ## Upon Detect Changes
+      ## Upon Detect New Area Codes
       # Configure Git
       # Commit Changes
       # Bump Version Number
