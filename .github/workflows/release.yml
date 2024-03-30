@@ -11,6 +11,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      # Needed by the action-gh-release action
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - name: Use Node.js 20
@@ -30,14 +33,26 @@ jobs:
             # Version bump detected
             echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
-      - name: Process Changes
-        run: |
-          echo "Going to create a release"
+          # TODO: Forcing
+          echo "VERSION=0.0.6" >> "$GITHUB_OUTPUT"
+      # - name: Process Changes
+      #   run: |
+      #     echo "Going to create a release"
+      #   if: ${{ steps.check-for-changes.outputs.VERSION != '' }}
+      - name: Create Release
+        id: release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.check-for-changes.outputs.VERSION }}
+          name: ${{ steps.check-for-changes.outputs.VERSION }}
+          # TODO: Clean up to main
+          target_commitish: schedule-fetch
+          generate_release_notes: true
+          # body_path: ${{ github.workspace }}-CHANGELOG.txt
+          # note you'll typically need to create a personal access token
+          # with permissions to create releases in the other repo
+          # token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
         if: ${{ steps.check-for-changes.outputs.VERSION != '' }}
-
-      # - name: Create Release
-      #   uses: softprops/action-gh-release@v2
-      #   if: startsWith(github.ref, 'refs/tags/')
 
 
       # TODO: Eval this
