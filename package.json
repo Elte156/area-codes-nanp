@@ -7,7 +7,7 @@
     "build": "tsc",
     "test": "jest",
     "fetch-area-codes": "ts-node ./scripts/area_code_generator.ts",
-    "format": "prettier --single-quote --write **/*.md **/*.ts **/*.yml",
+    "format": "prettier --single-quote --write '**/(*.md|*.ts|*.yml)'",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
