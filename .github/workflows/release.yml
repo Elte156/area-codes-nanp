@@ -21,6 +21,7 @@ jobs:
         with:
           node-version: 20
           cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
       - run: npm ci
       - run: npm run build
       - run: npm test
@@ -34,11 +35,7 @@ jobs:
             echo "VERSION=${VERSION}" >> "$GITHUB_OUTPUT"
           fi
           # TODO: Forcing
-          echo "VERSION=0.0.6" >> "$GITHUB_OUTPUT"
-      # - name: Process Changes
-      #   run: |
-      #     echo "Going to create a release"
-      #   if: ${{ steps.check-for-changes.outputs.VERSION != '' }}
+          # echo "VERSION=0.0.6" >> "$GITHUB_OUTPUT"
       - name: Create Release
         id: release
         uses: softprops/action-gh-release@v2
@@ -52,18 +49,12 @@ jobs:
           # note you'll typically need to create a personal access token
           # with permissions to create releases in the other repo
           # token: ${{ secrets.CUSTOM_GITHUB_TOKEN }}
-        if: ${{ steps.check-for-changes.outputs.VERSION != '' }}
-
-
-      # TODO: Eval this
-      # - name: Create Release
-      #   if: env.VERSION != ''
-      #   id: create_release
-      #   uses: actions/create-release@v1
+        if: ${{ steps.check-for-changes.outputs.VERSION }}
+      # - run: npm publish
       #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ env.VERSION }}
-      #     release_name: ${{ env.VERSION }}
-      #     draft: false
-      #     prerelease: false
+      #     NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      #   if: ${{ steps.release.outputs.id }}
+      - name: PUB
+        run: |
+          echo "PUB"
+        if: ${{ steps.release.outputs.id }}
