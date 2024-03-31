@@ -13,6 +13,7 @@
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.15.2",
     "@types/jest": "^29.5.12",
     "csv-parser": "^3.0.0",
     "jest": "^29.7.0",
