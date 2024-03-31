@@ -2,6 +2,7 @@ name: Sync Area Codes
 
 on:
   schedule:
+    # Update this just one time
     - cron: '0 12 * * *'
 
 jobs:
