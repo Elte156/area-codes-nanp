@@ -39,6 +39,7 @@ jobs:
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
+          token: ${{ secrets.PAT }}
           commit-message: |
             Updated area codes list v${{ steps.check-for-changes.outputs.NEW_VERSION }}
 
@@ -59,5 +60,5 @@ jobs:
       - name: Enable Pull Request Automerge
         run: gh pr merge --squash --auto "${{ steps.cpr.outputs.pull-request-number }}"
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.PAT }}
         if: ${{ steps.cpr.outputs.pull-request-number }}
