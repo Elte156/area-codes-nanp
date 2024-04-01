@@ -11,6 +11,9 @@ suite
 .add('areacodes 205', function() {
     const boom = areacodes.areaCodesInService.indexOf('205');
 })
+.add('areacodes 999', function() {
+    const boom = areacodes.areaCodesInService.indexOf('999');
+})
 
 // add listeners
 .on('cycle', function(event) {
