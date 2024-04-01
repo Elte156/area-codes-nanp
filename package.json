@@ -9,8 +9,8 @@
     "fetch-area-codes": "ts-node ./scripts/area_code_generator.ts",
     "lint": "TODO:",
     "lint:build": "publint --strict && attw --pack .",
-    "format": "prettier --single-quote --write '**/(*.md|*.ts|*.yml)'",
-    "format:check": "prettier --single-quote --check '**/(*.md|*.ts|*.yml)'",
+    "format": "prettier --single-quote --write .",
+    "format:check": "prettier --single-quote --check .",
     "prepublishOnly": "npm run build"
   },
   "devDependencies": {
