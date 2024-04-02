@@ -1,3 +1,4 @@
+const areacodesobj = require('../dist/area_codes_obj')
 const areacodes = require('../dist/area_codes')
 
 const Benchmark = require('benchmark');
@@ -5,6 +6,16 @@ const suite = new Benchmark.Suite;
 
 // add tests
 suite
+.add('areacodesobj 734', function() {
+    const boom = areacodesobj.areaCodesInServiceObj.find(x => x.npa === '734');
+})
+.add('areacodesobj 205', function() {
+    const boom = areacodesobj.areaCodesInServiceObj.find(x => x.npa === '205');
+})
+.add('areacodesobj 999', function() {
+    const boom = areacodesobj.areaCodesInServiceObj.find(x => x.npa === '999');
+})
+
 .add('areacodes 734', function() {
     const boom = areacodes.areaCodesInService.indexOf('734');
   })
