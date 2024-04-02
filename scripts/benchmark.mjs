@@ -1,18 +1,24 @@
-const areaCodes = require('../dist/area_codes');
+// const areaCodes = require('../dist/area_codes');
+// const Benchmark = require('benchmark');
 
-const Benchmark = require('benchmark');
+import { areaCodesInService } from '../dist/esm/index.js';
+// import { Benchmark } from 'benchmark';
+
+import pkg from 'benchmark';
+const { Benchmark } = pkg;
+
 const suite = new Benchmark.Suite();
 
 // add tests
 suite
   .add('areaCode check for 734', function () {
-    const result = areaCodes.areaCodesInService.indexOf('734');
+    const result = areaCodesInService.indexOf('734');
   })
   .add('areaCode check for 205', function () {
-    const result = areaCodes.areaCodesInService.indexOf('205');
+    const result = areaCodesInService.indexOf('205');
   })
   .add('areaCode check for 999', function () {
-    const result = areaCodes.areaCodesInService.indexOf('999');
+    const result = areaCodesInService.indexOf('999');
   })
 
   // add listeners

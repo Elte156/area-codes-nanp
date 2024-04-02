@@ -2,4 +2,4 @@ export {
   areaCodesByGeo,
   areaCodesByNonGeo,
   areaCodesInService,
-} from './area_codes';
+} from './area_codes.js';
