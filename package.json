@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run build:esm && npm run build:cjs",
     "build:esm": "tsc -p tsconfig.esm.json",
-    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json && mv ./dist/cjs/index.js ./dist/cjs/index.cjs && mv ./dist/cjs/index.d.ts ./dist/cjs/index.d.cts",
     "test": "jest",
     "test:benchmark": "node ./scripts/benchmark.js",
     "fetch-area-codes": "ts-node ./scripts/area_code_generator.ts",
@@ -28,25 +28,25 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   },
-  "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
   "type": "module",
+  "types": "./dist/esm/index.d.ts",
   "exports": {
     ".": {
-      "module": "./dist/index.mjs",
+      "module": "./dist/esm/index.js",
       "import": {
-        "types": "./dist/index.d.mts",
-        "default": "./dist/index.mjs"
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
       },
       "require": {
-        "types": "./dist/index.d.cts",
-        "default": "./dist/index.cjs"
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
       },
-      "default": "./dist/index.mjs"
+      "default": "./dist/esm/index.js"
     },
     "./package.json": "./package.json"
   },
-  "types": "./dist/index.d.ts",
   "files": [
     "dist"
   ],
