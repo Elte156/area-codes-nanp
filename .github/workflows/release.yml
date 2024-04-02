@@ -21,6 +21,7 @@ jobs:
       - run: npm ci
       - run: npm run format:check
       - run: npm run build
+      - run: npm run lint:build
       - run: npm test
       - run: npm run test:benchmark
       - name: Detect Version Change
