@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "test:benchmark": "node ./scripts/benchmark.js",
     "fetch-area-codes": "ts-node ./scripts/area_code_generator.ts",
     "lint": "TODO:",
     "lint:build": "publint --strict && attw --pack .",
@@ -16,6 +17,7 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.15.2",
     "@types/jest": "^29.5.12",
+    "benchmark": "^2.1.4",
     "csv-parser": "^3.0.0",
     "jest": "^29.7.0",
     "prettier": "^3.2.5",
