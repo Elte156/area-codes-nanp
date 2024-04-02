@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "test": "jest",
+    "test:benchmark": "node ./scripts/benchmark.js",
     "fetch-area-codes": "ts-node ./scripts/area_code_generator.ts",
     "format": "prettier --single-quote --write '**/(*.md|*.ts|*.yml)'",
     "format:check": "prettier --single-quote --check '**/(*.md|*.ts|*.yml)'",
