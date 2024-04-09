@@ -1,4 +1,4 @@
-import { areaCodesInService } from '../dist/esm/area_codes.js'
+import { areaCodesInService } from '../dist/esm/area_codes.js';
 import pkg from 'benchmark';
 
 const { Benchmark } = pkg;
