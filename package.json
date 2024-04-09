@@ -4,7 +4,9 @@
   "description": "List of in-service (active and valid) U.S. area codes (NPAs) according to the North American Numbering Plan Administrator (NANPA)",
   "author": "Tony Pagaduan <Elte156@gmail.com>",
   "scripts": {
-    "build": "tsc",
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "build:cjs": "tsc -p tsconfig.cjs.json && mv ./dist/cjs/index.js ./dist/cjs/index.cjs && mv ./dist/cjs/index.d.ts ./dist/cjs/index.d.cts",
     "test": "jest",
     "test:benchmark": "node ./scripts/benchmark.js",
     "fetch-area-codes": "ts-node ./scripts/area_code_generator.ts",
@@ -26,8 +28,25 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.4.3"
   },
-  "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
+  "main": "./dist/cjs/index.cjs",
+  "module": "./dist/esm/index.js",
+  "type": "module",
+  "types": "./dist/esm/index.d.ts",
+  "exports": {
+    ".": {
+      "module": "./dist/esm/index.js",
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      },
+      "require": {
+        "types": "./dist/cjs/index.d.cts",
+        "default": "./dist/cjs/index.cjs"
+      },
+      "default": "./dist/esm/index.js"
+    },
+    "./package.json": "./package.json"
+  },
   "files": [
     "dist"
   ],
