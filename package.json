@@ -1,6 +1,6 @@
 {
   "name": "area-codes-nanp",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "List of in-service (active and valid) U.S. area codes (NPAs) according to the North American Numbering Plan Administrator (NANPA)",
   "author": "Tony Pagaduan <Elte156@gmail.com>",
   "scripts": {
